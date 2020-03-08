@@ -1,0 +1,33 @@
+name: update_json
+
+on:
+  schedule:
+    # * is a special character in YAML so you have to quote this string
+    - cron:  '0 6 * * *'
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+    - name: Set up Python 3.8
+      uses: actions/setup-python@v1
+      with:
+        python-version: 3.8
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install requests json datetime OrderedDict
+    - name: Crawler
+      run: |
+        python crawler.py
+    - name: Push
+      shell: bash
+      run: |
+        curl -fsSL https://github.com/github/hub/raw/master/script/get | bash -s 2.14.1
+        bin/hub commit data.json -m "auto update data.json"
+        bin/hub push
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
