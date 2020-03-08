@@ -2,7 +2,6 @@ name: update_json
 
 on:
   schedule:
-    # * is a special character in YAML so you have to quote this string
     - cron:  '0 6 * * *'
 
 jobs:
@@ -27,6 +26,8 @@ jobs:
       shell: bash
       run: |
         curl -fsSL https://github.com/github/hub/raw/master/script/get | bash -s 2.14.1
+        git config --global user.email "jingxuanmin@gmail.com"
+        git config --global user.name "Benben"
         bin/hub commit data.json -m "auto update data.json"
         bin/hub push
       env:
